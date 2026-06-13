@@ -1,0 +1,7 @@
+"item","value"
+"Largest-n equal-width speed-up range","3.15-fold to 125.60-fold"
+"Largest-n max relative RMSE for EW when B >= 100","1.254"
+"MIMIC preferred model","normal"
+"MIMIC median speed-up","8.000"
+"BIG IDEAs preferred model","lognormal"
+"BIG IDEAs median speed-up","2.000"
