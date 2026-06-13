@@ -1,44 +1,51 @@
 # Fast and Scalable Symbolic Maximum Likelihood Estimation for Massive Univariate Histogram Data
 
-This repository contains the full data replication pipeline and computational source code necessary to reproduce the analyses, simulations, tables, and figures presented in the manuscript: **"Fast and Scalable Symbolic Maximum Likelihood Estimation for Massive Univariate Histogram Data"** by Ahmad Hakiim Jamaluddin, Syaiful Anam, Muhammad Jaffri Mohd Nasir, and Andrea Tri Rian Dani.
-
-*Note: A permanent DOI will be minted via Zenodo upon the formal acceptance and publication of the manuscript.*
+This repository hosts the replication code and data pipeline for the manuscript: **"Fast and Scalable Symbolic Maximum Likelihood Estimation for Massive Univariate Histogram Data"** authored by Ahmad Hakiim Jamaluddin, Syaiful Anam, Muhammad Jaffri Mohd Nasir, and Andrea Tri Rian Dani.
 
 ---
 
 ## Overview
 
-Maximum likelihood estimation (MLE) is a foundational tool for parametric inference, but evaluating raw likelihoods repeatedly becomes computationally prohibitive for massive samples ($n \ge 10^6$) and sliding-window workflows on streaming data.
+Evaluating classical maximum likelihood estimation (MLE) objectives repeatedly becomes a massive bottleneck for ultra-large datasets ($n \ge 10^6$) or within sliding-window architectures on continuous data streams.
 
-This project develops a **Symbolic Maximum Likelihood Estimation (SMLE)** framework for univariate continuous data. By compressing the raw sample into a histogram-valued symbol defined by $B$ boundary points ($B-1$ bins), the evaluation cost of the resulting multinomial log-likelihood is decoupled from $n$ and bounded at $\mathcal{O}(B)$ per optimization step.
+This project implements a **Symbolic Maximum Likelihood Estimation (SMLE)** framework for univariate continuous data. By mapping raw micro-data into histogram-valued symbols bounded by $B$ boundary points ($B-1$ bins), the log-likelihood evaluation cost drops from $\mathcal{O}(n)$ to $\mathcal{O}(B)$ per optimization step.
 
-### Key Project Components:
+### What This Pipeline Does:
 
-* **Asymptotic Approximation Proofs:** Mathematical validation showing that the symbolic log-likelihood converges uniformly to the raw-data log-likelihood up to a parameter-independent bin-width additive term as the partition becomes finer.
-* **Multi-Scenario Simulation Study:** Evaluation across five continuous distribution families (Exponential, Normal, Gamma, Weibull, and Lognormal) for sample sizes up to $10^6$ and bin configurations ranging from 10 to 500 bins.
-* **Binning Strategy Variations:** Direct comparison between Equal-Width (EW) and Equal-Probability (QU) partitions.
-* **Real-Data Streaming Validation:** A sliding-window optimization engine with $\mathcal{O}(1)$ streaming count updates. The replication script processes two distinct baseline frameworks: the **MIMIC-III intensive-care heart-rate stream** (the primary empirical focus of the manuscript text) and the **BIG IDEAs continuous glucose monitoring (CGM) stream**.
+* **Asymptotic Infill Benchmarks:** Simulates five classic continuous families (Exponential, Normal, Gamma, Weibull, Lognormal) up to $n=10^6$ under both Equal-Width (EW) and Equal-Probability (QU) binning schemes.
+* **Real-Data Moving-Window Applications:** Implements an optimized online count update mechanism ($\mathcal{O}(1)$ count shifts) evaluated across two physiological monitoring feeds:
+1. **MIMIC-III Intensive Care Heart-Rate Feed** (*The primary empirical case presented in the manuscript text*).
+2. **BIG IDEAs Continuous Glucose Monitoring Feed** (*Maintained within the source code pipeline execution structure*).
+
+
 
 ---
 
-## Repository Structure
+## Repository Architecture
+
+The execution of the replication script automatically generates a clean directory tree to separate structural components, intermediate outputs, and publication-ready outputs:
 
 ```text
 fast-scalable-symbolic-mle/
-├── master_replication.R       # The master script containing the full pipeline
-├── data/                      # Local data directory for real-world validation
-│   ├── mimic_hr.csv           # Prepared MIMIC-III heart rate stream data (presented in text)
-│   └── bigideas_cgm.csv       # Prepared BIG IDEAs glucose stream data (code pipeline baseline)
-├── figures/                   # Automatically generated manuscript-ready PDF plots
+├── master_replication.R       # Single cohesive script running the full workflow
+├── data/                      # Data dropzone (Populate before execution)
+│   ├── mimic_hr.csv           # Filtered heart-rate numerical stream data
+│   └── bigideas_cgm.csv       # Filtered glucose numerical stream data
+├── tables/                    # Publication-ready summary sheets (.csv)
+│   ├── Tab_Sim_Accuracy_1.csv
+│   ├── Tab_Sim_Accuracy_2.csv
+│   ├── Tab_Sim_Runtime_1.csv
+│   ├── Tab_Sim_Runtime_2.csv
+│   ├── Tab_Sim_Convergence_and_NLLGap.csv
+│   ├── Tab_RealData_Runtime.csv
+│   └── Tab_Manuscript_Summary_Stats.csv
+├── figures/                   # High-DPI standalone vector plots (.pdf)
 │   ├── Fig_Sim_RMSE_vs_B.pdf
 │   ├── Fig_Sim_Runtime_vs_n.pdf
 │   ├── Fig_MIMIC_Window_Params.pdf
-│   └── Fig_BIGIDEAs_Window_Params.pdf
-├── tables/                    # Automatically generated manuscript-ready CSV tables
-│   ├── Tab_Sim_Accuracy_1.csv
-│   ├── Tab_Sim_Runtime_1.csv
-│   └── Tab_RealData_Runtime.csv
-└── results/                   # Detailed replication artifacts and checkpoint data
+│   ├── Fig_BIGIDEAs_Window_Params.pdf
+│   └── Fig_RealData_Sensitivity.pdf
+└── results/                   # Raw multi-run experimental logs
     ├── simulation/
     └── realdata/
 
@@ -46,55 +53,56 @@ fast-scalable-symbolic-mle/
 
 ---
 
-## System Requirements and Dependencies
+## Prerequisites & Setup
 
-All analyses, benchmarks, and data visualisations were programmed and executed within the **R statistical computing environment** (v4.0 or later recommended).
+The entire computational suite is engineered in plain **R**. It includes a lightweight bootstrapping function (`load_or_install`) that dynamically flags, downloads, and maps dependencies directly from the cloud CRAN mirror without requiring manual package management.
 
-The pipeline includes an automated dependency manager (`load_or_install`) that checks your local environment and fetches missing packages from CRAN. The script relies on the following packages:
+### Required Packages:
 
-* **Data Wrangling & I/O:** `data.table`, `dplyr`, `tidyr`, `purrr`, `tibble`, `stringr`
-* **Visualization & Formatting:** `ggplot2`, `scales`
-* **Graphics Device Extension:** Output figures are rendered via `cairo_pdf` to ensure vector-graphic manuscript compliance.
+* **Engine & Aggregation:** `data.table`
+* **Wrangling Core:** `dplyr`, `tidyr`, `purrr`, `tibble`, `stringr`
+* **Plotting and Typography:** `ggplot2`, `scales`
+
+*Note: Visual outputs use a `cairo_pdf` device hook to guarantee embedded typefaces and strict vector geometry compliance required by leading computational statistics journals.*
 
 ---
 
-## Usage: Replicating the Analysis
+## Replicating the Results
 
-To replicate all simulation tables, NLL gap assessments, convergence frequencies, and real-data window trajectories from the paper:
+### 1. Position Data Anchors
 
-1. **Clone the repository:**
-```bash
-git clone https://github.com/HakiimJ/fast-scalable-symbolic-mle.git
-cd fast-scalable-symbolic-mle
+Drop your filtered empirical asset sheets (`mimic_hr.csv` and `bigideas_cgm.csv`) inside the newly established `data/` folder.
 
-```
+### 2. Configure Local Directory Paths
 
+Open `master_replication.R` and point the `mainDir` pointer variable to your exact workspace absolute path:
 
-2. **Configure Local Environment Paths:**
-Open `master_replication.R` in your preferred editor/IDE and change the `mainDir` path at the top of the script to reflect your local directory structure:
 ```R
-mainDir <- "/your/local/path/to/fast-scalable-symbolic-mle"
+mainDir <- "/your/absolute/local/path/fast-scalable-symbolic-mle"
 
 ```
 
+### 3. Choose Execution Configuration
 
-3. **Configure Runtime Modes (Optional):**
-By default, the script runs the complete `PAPER_CONFIG` used in the final manuscript ($R = 1,000$ replications, large sample matrices, full window evaluation). If you want to check your system capabilities or verify execution quickly, swap the active config flag to `FAST_CONFIG`:
+The script exposes two preset configuration matrices under Section 1:
+
+* `FAST_CONFIG`: Tailored for local validation loops ($R = 10$, truncated samples, micro-window depth).
+* `PAPER_CONFIG`: The complete, high-fidelity setup utilized in the finalized text ($R = 1000$ iterations, full sample matrices, absolute streaming depth).
+
+Switch the active assignment flag to target your resource profile:
+
 ```R
-ACTIVE_CONFIG <- FAST_CONFIG  # Short test run
+ACTIVE_CONFIG <- PAPER_CONFIG  # Run final paper specs
 
 ```
 
+### 4. Fire the Controller Pipeline
 
-4. **Execute the full pipeline:**
-Run the master controller from your shell terminal:
+Launch the master file directly from your terminal console:
+
 ```bash
 Rscript master_replication.R
 
 ```
 
-
-Or execute `run_full_pipeline(ACTIVE_CONFIG)` inside an interactive R session/RStudio.
-
-The console will report progress percentages with a live tracking bar. Upon completion, all manuscript-ready tables and figures will be systematically exported into their designated folders.
-
+A reactive status monitor tracks real-time generation metrics directly within the console standard output. Once finalized, look in the `tables/` and `figures/` directories to check the compiled outputs.
