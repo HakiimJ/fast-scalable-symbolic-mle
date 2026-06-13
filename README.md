@@ -17,7 +17,7 @@ This project develops a **Symbolic Maximum Likelihood Estimation (SMLE)** framew
 * **Asymptotic Approximation Proofs:** Mathematical validation showing that the symbolic log-likelihood converges uniformly to the raw-data log-likelihood up to a parameter-independent bin-width additive term as the partition becomes finer.
 * **Multi-Scenario Simulation Study:** Evaluation across five continuous distribution families (Exponential, Normal, Gamma, Weibull, and Lognormal) for sample sizes up to $10^6$ and bin configurations ranging from 10 to 500 bins.
 * **Binning Strategy Variations:** Direct comparison between Equal-Width (EW) and Equal-Probability (QU) partitions.
-* **Real-Data Streaming Validation:** A sliding-window optimization pipeline with $\mathcal{O}(1)$ streaming count updates applied to the MIMIC-III intensive-care heart-rate stream (over 1.9 million data points) and the BIG IDEAs glucose data stream.
+* **Real-Data Streaming Validation:** A sliding-window optimization pipeline with $\mathcal{O}(1)$ streaming count updates applied to the MIMIC-III intensive-care heart-rate stream (containing 1,912,844 observations).
 
 ---
 
@@ -27,8 +27,7 @@ This project develops a **Symbolic Maximum Likelihood Estimation (SMLE)** framew
 fast-scalable-symbolic-mle/
 ├── master_replication.R       # The master script containing the full pipeline
 ├── data/                      # Local data directory for real-world validation
-│   ├── mimic_hr.csv           # Prepared MIMIC-III heart rate stream data
-│   └── bigideas_cgm.csv       # Prepared BIG IDEAs glucose stream data
+│   └── mimic_hr.csv           # Prepared MIMIC-III heart rate stream data
 ├── figures/                   # Automatically generated manuscript-ready PDF plots
 │   ├── Fig_Sim_RMSE_vs_B.pdf
 │   ├── Fig_Sim_Runtime_vs_n.pdf
@@ -63,35 +62,41 @@ To replicate all simulation tables, NLL gap assessments, convergence frequencies
 
 1. **Clone the repository:**
 ```bash
+
+```
+
+
+
 git clone https://github.com/HakiimJ/fast-scalable-symbolic-mle.git
 cd fast-scalable-symbolic-mle
 
 ```
 
-
 2. **Configure Local Environment Paths:**
-Open `master_replication.R` in your preferred editor/IDE and change the `mainDir` path at the top of the script to reflect your local directory structure:
-```R
+   Open `master_replication.R` in your preferred editor/IDE and change the `mainDir` path at the top of the script to reflect your local directory structure:
+   ```R
 mainDir <- "/your/local/path/to/fast-scalable-symbolic-mle"
 
 ```
 
-
 3. **Configure Runtime Modes (Optional):**
 By default, the script runs the complete `PAPER_CONFIG` used in the final manuscript ($R = 1,000$ replications, large sample matrices, full window evaluation). If you want to check your system capabilities or verify execution quickly, swap the active config flag to `FAST_CONFIG`:
 ```R
+
+```
+
+
+
 ACTIVE_CONFIG <- FAST_CONFIG  # Short test run
 
 ```
 
-
 4. **Execute the full pipeline:**
-Run the master controller from your shell terminal:
-```bash
+   Run the master controller from your shell terminal:
+   ```bash
 Rscript master_replication.R
 
 ```
-
 
 Or execute `run_full_pipeline(ACTIVE_CONFIG)` inside an interactive R session/RStudio.
 
