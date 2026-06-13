@@ -87,5 +87,3 @@ Rscript master_replication.R
 ```
 
 A reactive status progress monitor tracks real-time generation loop checkpoints directly within the console standard output. Once complete, your updated findings will be formatted into the `tables/` and `figures/` directories.
-
-```
